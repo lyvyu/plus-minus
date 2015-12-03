@@ -1,6 +1,11 @@
-function randomInt(min,max)
+function randomInt(min,max,times,target)
 {
-    return Math.floor(Math.random()*(max-min+1)+min);
+	for (var i = 0; i < times; i++) {		
+    	var rand = Math.floor(Math.random()*(max-min+1)+min);
+    	target.push(rand);
+	};
+
+	return;
 }
 
 var i, data, Tiles, tiles;
@@ -12,44 +17,51 @@ function setAttributes(el, attrs) {
 }
 
 Tiles = function Tiles(data) {
-	var i,
+	var div, numb;
+
+	if($('.number-swatch:visible').length === 25) {
+		numb = $('<span>', {class: "number-container", text: data});
+		console.log($('.number-swatch:visible').length)
+		return numb;
+	} else {
+		console.log('mai mic')
+		console.log($('.number-swatch:visible').length)
 		div = document.createElement('div');
+		var dataId =  'id_' + i;
 
-	for(i in data) {
-		var dataId =  'data-'+ i;
-		setAttributes(div, {dataId: data[i]});
+		setAttributes(div, {
+			'data-id': dataId,
+			'class':'col-xs-2 number-swatch bg-primary'
+		});
+
+		$('<span>', {class: "number-container", text: data}).appendTo(div);
+		return div;
 	}
-
-	div.innerHTML = data.album_name;
-
-	for(i in this) {
-		if(typeof this[i] === 'function') {
-			div[i] = this[i].bind(div);
-		} else {
-			div[i] = this[i];
-		}
-	}
-
-	return div;
 };
-
-data = [
-	{'id':1,'album_name':'test1','user':'user_id1'},
-	{'id':2,'album_name':'test2','user':'user_id2'}
-];
-
-for(i in data) {
-	tiles = new Tiles(data[i]);
-	document.body.appendChild(tiles);
-}
 
 function game() {	
 	$('.number-swatch').each(function() {
-		var rand = randomInt(-9,9);
-		var th = $(this);
-		th.text('');
-		$('<span>', {class: "number-container", text: rand}).appendTo(th);
-	});
+		// var rand = randomInt(-9,9);
+		// var th = $(this);
+		// th.text('');
+		// $('<span>', {class: "number-container", text: rand}).appendTo(th);
+	});	
+
+	data = [];
+	randomInt(-9,9,25,data);
+
+	for(i=0; i<data.length; i++) {
+		tiles = new Tiles(data[i]);
+		if(!($('.number-swatch').length >= 25)) {
+			document.getElementById('playing-area').appendChild(tiles);
+		} else {
+			console.log(tiles)
+			$('div[data-id="id_' + i + '"]').find('span').remove();
+			$('div[data-id="id_' + i + '"]').append(tiles);
+		}
+	}
+
+
 
 	$('.number-swatch').removeClass('hidden-number');
 	$('.cloned').remove();
@@ -66,7 +78,7 @@ $(document).ready(function() {
 		var offset = { top: clone.context.offsetTop, left:clone.context.offsetLeft  };
 		var posY = offset.top;
 		var posX = offset.left;
-		console.log(clone)
+		
 		clone.css({
 			'position':'absolute',
 			'top': posY,
