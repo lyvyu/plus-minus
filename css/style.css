@@ -17,7 +17,7 @@
 }
 
 .bg-pink {
-	background: #FC5C70;
+	background: #FC5C70!important;
 }
 
 .bg-primary {
@@ -25,7 +25,7 @@
 }
 
 .bg-blue {
-	background: #4A90E2;
+	background: #4A90E2!important;
 }
 
 .title {
@@ -60,7 +60,13 @@
     color: #fff;
 	box-shadow: 0px 0px 6px #000;
     margin: 0 10px 20px;
+    cursor: default;
+    pointer-events: none;
+}
+
+.number-swatch.active{
     cursor: pointer;
+    pointer-events: visible;
 }
 
 .number-container {
