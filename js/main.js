@@ -23,7 +23,10 @@ Tiles = function Tiles(data) {
 	if($('.number-swatch:visible').length === 25) {
 		numb = $('<span>', {class: "number-container", text: data});
 		// console.log($('.number-swatch:visible').length)
-		return numb;
+		return {
+			elm: numb,
+			content: data
+		};
 	} else {
 		// console.log('mai mic')
 		// console.log($('.number-swatch:visible').length)
@@ -41,6 +44,7 @@ Tiles = function Tiles(data) {
 		var dataId =  'id_' + i;
 
 		setAttributes(div, {
+			'data-id': dataId,
 			'data-context': data,
 			'data-row': row,
 			'data-col': col,
@@ -57,6 +61,8 @@ var botPlayer = false, user = false;
 function bot(col) {
 
 	if (botPlayer) {
+		$('.number-swatch.cloned').remove();
+
 		$('.number-swatch[data-col="'+ col +'"]').toggleClass('bg-pink active');
 
 		var myArray = [];
@@ -69,8 +75,9 @@ function bot(col) {
 
 		var chosenTile = $('.number-swatch[data-col="'+ col +'"][data-context="'+ maxVal +'"]');
 		console.log(chosenTile);
-	
-		chosenTile.click(function (e) {
+
+		$(document).on('click','.number-swatch[data-col="'+ col +'"][data-context="'+ maxVal +'"]',function (e) {
+			e.preventDefault();
 			var clone = '';
 				clone = $(this).clone();
 			var thisParent = $(this).parent();
@@ -84,28 +91,34 @@ function bot(col) {
 				'left': posX - 10
 			}).addClass('cloned').appendTo(thisParent)
 				.animate({'top': -100, 'opacity': 0}).fadeOut(function(){
-					var dataNumb = $(this).data('col');
-					$('.number-swatch').removeClass('bg-pink active');
+					var dataNumb = $(this).data('row');
+
+					botPlayer = false;
+					user = true;
+
+					$('.number-swatch[data-col="'+ col +'"]').removeClass('bg-pink active');
 					bot(dataNumb);
+				//return false;
 				});
 
+
 			$(this).addClass('hidden-number');
-		})
+		});
 
-		botPlayer = false;
-		user = true;
-
-		setTimeout(function(){	    
+		setTimeout(function(){
 			chosenTile.trigger("click");
 		}, 1500);
+
+		console.log('bot',botPlayer,'user',user);
 
 		return false;
 
 	} else if(user) {
-	// user click		
+	// user click
+		$('.number-swatch.cloned').remove();
 		$('.number-swatch[data-row="'+ col +'"]').toggleClass('bg-blue active');
 
-		$('.number-swatch.active').click(function (e) {
+		$(document).on('click','.number-swatch.active',function (e) {
 			var clone = '';
 				clone = $(this).clone();
 			var thisParent = $(this).parent();
@@ -121,14 +134,21 @@ function bot(col) {
 				.animate({'top': -100, 'opacity': 0}).fadeOut(function(){
 					var dataNumb = $(this).data('col');
 					$('.number-swatch').removeClass('bg-blue active');
+
+					botPlayer = true;
+					user = false;
 					bot(dataNumb);
 				});
 
-			$(this).addClass('hidden-number');
-		})
+			botPlayer = true;
+			user = false;
 
-		botPlayer = true;
-		user = false;
+			$(this).addClass('hidden-number');
+		});
+
+		console.log('bot',botPlayer,'user',user);
+
+		return false;
 	}
 
 }
@@ -144,7 +164,7 @@ function game() {
 		} else {
 			console.log(tiles)
 			$('div[data-id="id_' + i + '"]').find('span').remove();
-			$('div[data-id="id_' + i + '"]').append(tiles);
+			$('div[data-id="id_' + i + '"]').attr('data-context',tiles.content).append(tiles.elm);
 		}
 	}
 
@@ -166,7 +186,7 @@ function game() {
 		var offset = { top: clone.context.offsetTop, left:clone.context.offsetLeft  };
 		var posY = offset.top;
 		var posX = offset.left;
-		
+
 		clone.css({
 			'position':'absolute',
 			'top': posY,
