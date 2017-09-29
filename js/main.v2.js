@@ -36,6 +36,8 @@ function Game() {
 
 	this.render = () => {
 		this.playingArea.html('');
+		this.score['me'].text(0);
+		this.score['them'].text(0);
 
 		for (let i = 1; i <= 5; i++) {
 			for (let j = 1; j <= 5; j++) {
@@ -51,17 +53,24 @@ function Game() {
 
 	this.activateRow = (row) => {
 		$('.number-swatch').removeClass('bg-blue bg-pink mine theirs');
-		$('.number-swatch[data-row="'+ row +'"]').addClass('bg-blue mine');
+		$('.number-swatch[data-row="'+ row +'"]').each((idx, elm) => {
+			setTimeout(() => {
+				$(elm).addClass('bg-blue mine');
+			}, idx * 110)
+		});
 	}
 
 	this.activatecol = (col) => {
 		$('.number-swatch').removeClass('bg-blue bg-pink mine theirs');
-		$('.number-swatch[data-col="'+ col +'"]').addClass('bg-pink theirs');
+		$('.number-swatch[data-col="'+ col +'"]').each((idx, elm) => {
+			setTimeout(() => {
+				$(elm).addClass('bg-pink theirs');
+			}, idx * 110)
+		});
 	}
 
 	this.updateScore = (which, score) => {
 		let current = this.score[which].text();
-		console.log(current)
 		this.score[which].text(+current + score);
 	}
 
@@ -79,7 +88,9 @@ let game = new Game();
 
 game.run();
 
-$(document).on('click', '.refresh-btn', () => {
+$(document).on('click', '.refresh-btn', (e) => {	
+	e.preventDefault();
+
 	game.reset();
 });
 
@@ -106,16 +117,17 @@ $(document).on('click', '.number-swatch.mine', function (elm) {
 	.fadeOut(function () {
 		clone.remove();
 
-		game.activatecol(col);
+		setTimeout(() => {
+			game.activatecol(col);
+		}, 200)
 
 		botPlayer(col);
 	});	
 });
 
 function botPlayer(col) {
-	let selectedTile = $('.number-swatch.theirs').filter(elm => {
-		return $(elm).data('context')
-	});
+	let selectedTile = $(document).find('.theirs')
+	console.log(selectedTile)
 }
 
 
