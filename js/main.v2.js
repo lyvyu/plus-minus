@@ -84,7 +84,7 @@ function Game() {
 }
 
 
-let game = new Game();
+const game = new Game();
 
 game.run();
 
@@ -97,8 +97,7 @@ $(document).on('click', '.refresh-btn', (e) => {
 $(document).on('click', '.number-swatch.mine', function (elm) {
 	let $this = $(this);
 	let clone = $this.clone();
-	let parent = $this.parent();
-	let offset = { top: $this.context.offsetTop, left: $this.context.offsetLeft  };
+	let offset = $this.position();
 	let col = $this.data('col');
 	let points = $this.data('context');
 
@@ -110,24 +109,60 @@ $(document).on('click', '.number-swatch.mine', function (elm) {
 	.css({
 			'position':'absolute',
 			'top': offset.top,
-			'left': offset.left - 10
+			'left': offset.left
 		})
-	.addClass('cloned').appendTo(parent)	
-	.animate({'top': -100, 'opacity': 0})	
+	.addClass('cloned').appendTo($this.parent())	
+	.animate({'top': -100, 'opacity': 0})
 	.fadeOut(function () {
 		clone.remove();
 
-		setTimeout(() => {
-			game.activatecol(col);
-		}, 200)
+		game.activatecol(col);
 
-		botPlayer(col);
+		setTimeout(() => {
+			_botPlayer(col);
+		}, 1000)
 	});	
 });
 
-function botPlayer(col) {
-	let selectedTile = $(document).find('.theirs')
-	console.log(selectedTile)
+function _botPlayer(col) {
+	let selectedTile = $('.number-swatch[data-col='+ col +']')
+		.not('.hidden-number').get()
+		.map((elm) => {
+			return {
+				nr: $(elm).data('context'),
+				element: elm
+			};
+		})
+		.reduce((prev, current) => {
+			return (prev.nr > current.nr) ? $(prev.element) : $(current.element);
+		});
+
+	let clone = selectedTile.clone();
+	let offset = selectedTile.position();
+	let row = selectedTile.data('row');
+	let points = selectedTile.data('context');
+
+	selectedTile.addClass('hidden-number');
+
+	game.updateScore('them', points);
+
+	clone
+	.css({
+			'position':'absolute',
+			'top': offset.top,
+			'left': offset.left
+		})
+	.addClass('cloned').appendTo(selectedTile.parent())	
+	.animate({'top': -100, 'opacity': 0})
+	.fadeOut(function () {
+		clone.remove();
+
+		game.activateRow(row);
+
+		// setTimeout(() => {
+			// _botPlayer(col);
+		// }, 1000)
+	});	
 }
 
 

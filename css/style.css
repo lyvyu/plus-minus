@@ -37,7 +37,7 @@
 	position: relative;
 }
 
-.names-span {
+.score {
     border-radius: 5px;
     padding: 10px;
     font-size: 40px;
@@ -64,7 +64,7 @@
     pointer-events: none;
 }
 
-.number-swatch.active{
+.number-swatch.mine{
     cursor: pointer;
     pointer-events: visible;
 }
