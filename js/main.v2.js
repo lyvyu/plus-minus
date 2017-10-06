@@ -132,48 +132,33 @@ $(document).on('click', '.number-swatch.mine', function (elm) {
  * */
 function _botPlayer(col) {
   let arr = [];
-  let grid = $('.number-swatch')
-     .not('.hidden-number').get()
+  let grid = $('.number-swatch').get()
      .forEach((elm) => {
-       let row = $(elm).data('row');
+       let element = $(elm);
+       let row = element.data('row');
 
        if (!arr[row]) {
          arr[row] = [];
        }
 
-       arr[row].push({
-         nr: $(elm).data('context'),
-         element: elm
-       })
+       if (element.hasClass('hidden-number')) {
+         arr[row].push(null)
+       } else {
+         arr[row].push({
+           nr: $(elm).data('context'),
+           element: elm
+         })
+       }
 
      });
 
-  let c = {};
-  let min = arr.map((row, idx) => {
-    let minVal = Math.min.apply(Math, row.map(function(o){return o.nr;}));
-    let count = 0;
+  // CalcBestMove(arr, col);
 
-    return row.filter(item => {
-      let elmCol = $(item.element).data('col');
+  // console.log(c)
+  // return;
 
-      if (item.nr < 0) {
-        count++;
-      }
-
-      c[idx] = count;
-
-      return elmCol === col && item.nr > minVal;
-    });
-  }).filter(item => {
-    return item.length > 0;
-  })[0];
-
-  // let minn =
-
-  console.log(c)
-  return;
-
-  let selectedTile = $(min[0].element);
+  let bestMove = CalcBestMove(arr, col)
+  let selectedTile = $(bestMove.element);
      // $('.number-swatch[data-col=' + col + ']')
      // .not('.hidden-number').get()
      // .map((elm) => {
@@ -213,8 +198,28 @@ function _botPlayer(col) {
      });
 }
 
-function CalcBestMove() {
+function CalcBestMove(grid, col) {
+  let b = grid.map((row) => {
+    let currentElmVal = row[col - 1] ? row[col - 1] : null;
+    let maxRowVal = Math.max.apply(Math, row.map(itm => itm ? itm.nr : -9 ));
+    let diff = currentElmVal ? Math.abs(currentElmVal.nr - maxRowVal) : currentElmVal;
+    // console.log(ridx)
 
+    if (currentElmVal) {
+      console.log('current: ' + currentElmVal.nr, 'row max: ' + maxRowVal, 'diff: ' + diff)
+    } else {
+      console.log('current: ' + currentElmVal, 'row max: ' + maxRowVal, 'diff: ' + diff)
+    }
+
+    return diff;
+  });
+
+  let min = Math.min.apply(Math, b.filter(itm => itm !== null));
+  let idx = b.findIndex((el) => el === min);
+
+  console.log(grid[idx][col - 1]);
+
+  return grid[idx][col - 1];
 }
 
 
