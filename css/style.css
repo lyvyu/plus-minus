@@ -82,7 +82,8 @@
 }
 
 .hidden-number {
-	opacity: 0;
+	opacity: 0.2;
+	color: #7C7B7B;
 	pointer-events: none;
 	transition: all .3s ease;
 }

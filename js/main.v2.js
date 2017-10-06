@@ -56,7 +56,7 @@ function Game() {
 
   this.activateRow = (row) => {
     $('.number-swatch').removeClass('bg-blue bg-pink mine theirs');
-    $('.number-swatch[data-row="' + row + '"]').each((idx, elm) => {
+    $('.number-swatch[data-row="' + row + '"]').not('.hidden-number').each((idx, elm) => {
       setTimeout(() => {
         $(elm).addClass('bg-blue mine');
       }, idx * 110)
@@ -65,7 +65,7 @@ function Game() {
 
   this.activatecol = (col) => {
     $('.number-swatch').removeClass('bg-blue bg-pink mine theirs');
-    $('.number-swatch[data-col="' + col + '"]').each((idx, elm) => {
+    $('.number-swatch[data-col="' + col + '"]').not('.hidden-number').each((idx, elm) => {
       setTimeout(() => {
         $(elm).addClass('bg-pink theirs');
       }, idx * 110)
@@ -75,6 +75,15 @@ function Game() {
   this.updateScore = (which, score) => {
     let current = this.score[which].text();
     this.score[which].text(+current + score);
+  }
+
+  this.checkWin = () => {
+    let playerTiles = $('.number-swatch.mine').not('.hidden-number');
+    let botTiles = $('.number-swatch.mine').not('.hidden-number');
+
+    console.log(playerTiles.length, botTiles.length)
+
+    return playerTiles.length === 0 && botTiles.length === 0;
   }
 
   this.run = () => {
@@ -104,7 +113,13 @@ $(document).on('click', '.number-swatch.mine', function (elm) {
   let col = $this.data('col');
   let points = $this.data('context');
 
-  $this.addClass('hidden-number');
+  if (game.checkWin()) {
+    console.log('GAME ENDED');
+
+    return;
+  }
+
+  $this.addClass('hidden-number').removeClass('bg-blue bg-pink');
 
   game.updateScore('me', points);
 
@@ -152,24 +167,14 @@ function _botPlayer(col) {
 
      });
 
-  // CalcBestMove(arr, col);
+  if (game.checkWin()) {
+    console.log('GAME ENDED');
 
-  // console.log(c)
-  // return;
+    return;
+  }
 
-  let bestMove = CalcBestMove(arr, col)
+  let bestMove = CalcBestMove(arr, col);
   let selectedTile = $(bestMove.element);
-     // $('.number-swatch[data-col=' + col + ']')
-     // .not('.hidden-number').get()
-     // .map((elm) => {
-     //   return {
-     //     nr: $(elm).data('context'),
-     //     element: elm
-     //   };
-     // })
-     // .reduce((prev, current) => {
-     //   return (prev.nr > current.nr) ? $(prev.element) : $(current.element);
-     // });
 
   let clone = selectedTile.clone();
   let offset = selectedTile.position();
@@ -179,7 +184,7 @@ function _botPlayer(col) {
   // console.log(selectedTile)
   // return;
   // debugger;
-  selectedTile.addClass('hidden-number');
+  selectedTile.addClass('hidden-number').removeClass('bg-blue bg-pink');
 
   game.updateScore('them', points);
 
@@ -203,7 +208,6 @@ function CalcBestMove(grid, col) {
     let currentElmVal = row[col - 1] ? row[col - 1] : null;
     let maxRowVal = Math.max.apply(Math, row.map(itm => itm ? itm.nr : -9 ));
     let diff = currentElmVal ? Math.abs(currentElmVal.nr - maxRowVal) : currentElmVal;
-    // console.log(ridx)
 
     if (currentElmVal) {
       console.log('current: ' + currentElmVal.nr, 'row max: ' + maxRowVal, 'diff: ' + diff)
