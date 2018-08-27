@@ -1,0 +1,91 @@
+.min-container {
+  max-width: 600px;
+  margin: auto;
+}
+
+.no-sides-margin {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.no-bot-margin {
+  margin-bottom: 0!important;
+}
+
+.small-title {
+  font-size: 17px;
+}
+
+.bg-pink {
+  background: #FC5C70!important;
+}
+
+.bg-primary {
+  background: #7C7B7B;
+}
+
+.bg-blue {
+  background: #4A90E2!important;
+}
+
+.title {
+  padding: 15px 0px;
+}
+
+.playing-area {
+  margin: 50px 0;
+  position: relative;
+}
+
+.score {
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 40px;
+  color: #fff;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.refresh-btn {
+  display: inline-block;
+  font-size: 50px;
+  color: #7D7C7C;
+  vertical-align: middle;
+}
+
+.number-swatch {
+  flex: 1 1 100px;
+  height: 100px;
+  border-radius: 5px;
+  font-size: 40px;
+  color: #fff;
+  box-shadow: 0px 0px 6px #000;
+  margin: 0 10px 20px;
+  cursor: default;
+  pointer-events: none;
+  position: relative;
+}
+
+.number-swatch.mine{
+  cursor: pointer;
+  pointer-events: visible;
+}
+
+.number-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.row.row-in {
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.hidden-number {
+  opacity: 0.2;
+  color: #7C7B7B;
+  pointer-events: none;
+  transition: all .3s ease;
+}
